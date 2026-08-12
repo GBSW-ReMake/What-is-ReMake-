@@ -106,8 +106,10 @@
       field.renderStatic();
     } else {
       field.render(0);
+      canvas.style.opacity = "0.1";
 
-      const BASE_OPACITY = 0.9;
+      const MIN_OPACITY = 0.1;
+      const BASE_OPACITY = 0.85;
 
       const trigger = ScrollTrigger.create({
         trigger: section,
@@ -118,13 +120,17 @@
         onUpdate: (self) => {
           const p = self.progress;
           let formProgress: number;
-          let opacity = BASE_OPACITY;
+          let opacity: number;
 
-          // 0 -> 0.5 scatter into REMAKE, 0.5 -> 0.8 hold formed, 0.8 -> 1 disperse away.
+          // 0 -> 0.5 scatter into REMAKE (fading in as it forms, so the loose
+          // dust never competes with the copy at rest), 0.5 -> 0.8 hold formed
+          // at full strength, 0.8 -> 1 disperse + fade away.
           if (p < 0.5) {
             formProgress = p / 0.5;
+            opacity = MIN_OPACITY + (BASE_OPACITY - MIN_OPACITY) * formProgress;
           } else if (p < 0.8) {
             formProgress = 1;
+            opacity = BASE_OPACITY;
           } else {
             const fade = (p - 0.8) / 0.2;
             formProgress = 1 - fade;

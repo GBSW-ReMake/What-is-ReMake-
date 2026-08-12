@@ -20,7 +20,7 @@ const stages = ["Build", "Launch", "Operate", "Learn", "ReMake"];
         <circle class="cycle-ring__fill" cx="120" cy="120" r="100" data-ring-fill />
       </svg>
       {stages.map((stage, i) => (
-        <div class="cycle-node" data-cycle-node style={`--angle: ${i * 72 - 90}deg`}>
+        <div class="cycle-node" data-cycle-node data-index={i} data-count={stages.length}>
           <span class="cycle-node__num">{String(i + 1).padStart(2, "0")}</span>
           <span class="cycle-node__label">{stage}</span>
         </div>
@@ -107,20 +107,25 @@ const stages = ["Build", "Launch", "Operate", "Learn", "ReMake"];
 
   .cycle-node {
     position: absolute;
+    /* top/left are set per-node in JS as container-relative percentages —
+       percentages inside transform: translate() resolve against the node's
+       OWN box, not the container, so the angle math has to happen there. */
     top: 50%;
     left: 50%;
-    --radius: 42%;
-    transform: rotate(var(--angle)) translate(var(--radius)) rotate(calc(-1 * var(--angle)));
+    --node-scale: 1;
+    transform: translate(-50%, -50%) scale(var(--node-scale));
     display: grid;
     justify-items: center;
     gap: var(--space-2xs);
     text-align: center;
     color: var(--color-on-bleed);
+    background: var(--color-bleed);
+    padding: var(--space-2xs) var(--space-sm);
     transition: color 400ms var(--ease-out), transform 400ms var(--ease-out);
   }
   .cycle-node.is-active {
     color: var(--color-accent-2);
-    transform: rotate(var(--angle)) translate(var(--radius)) rotate(calc(-1 * var(--angle))) scale(1.1);
+    --node-scale: 1.1;
   }
   .cycle-node__num {
     font-family: var(--font-mono);
@@ -159,6 +164,21 @@ const stages = ["Build", "Launch", "Operate", "Learn", "ReMake"];
     const radius = 100;
     const circumference = 2 * Math.PI * radius;
     ringFill.style.strokeDasharray = String(circumference);
+
+    // Position each node on the ring by computing left/top as container-relative
+    // percentages directly (trig), rather than transform: translate(%), which
+    // resolves against the node's own box and left every node stuck near centre.
+    const RING_RADIUS_PCT = 42;
+    nodes.forEach((node) => {
+      const i = Number(node.dataset.index ?? 0);
+      const count = Number(node.dataset.count ?? nodes.length);
+      const angleDeg = (i / count) * 360 - 90;
+      const angleRad = (angleDeg * Math.PI) / 180;
+      const x = 50 + Math.cos(angleRad) * RING_RADIUS_PCT;
+      const y = 50 + Math.sin(angleRad) * RING_RADIUS_PCT;
+      node.style.left = `${x}%`;
+      node.style.top = `${y}%`;
+    });
 
     const applyProgress = (progress: number) => {
       ringFill.style.strokeDashoffset = String(circumference * (1 - progress));

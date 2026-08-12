@@ -12,7 +12,6 @@ const projects = (await getCollection("projects"))
   <section class="section">
     <div class="wrap">
       <h1 class="head">What we made</h1>
-      <p class="dek">프로젝트 개수로 허세 부리지 않습니다. 실제로 있는 것만 보여줍니다.</p>
       <div class="project-grid">
         {projects.map((project) => (
           <ProjectCard
