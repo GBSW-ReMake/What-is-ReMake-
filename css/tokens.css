@@ -1,0 +1,78 @@
+/* Hallmark · tokens · theme: custom (vibe: "student dev collective, black & white, sharp, confident, manifesto") */
+
+:root {
+  /* ---- colour: paper surface (light) ---- */
+  --color-paper:      oklch(97% 0.006 240);
+  --color-paper-2:    oklch(93% 0.008 240);
+  --color-rule:       oklch(82% 0.008 240);
+  --color-ink:        oklch(17% 0.010 240);
+  --color-ink-2:      oklch(38% 0.010 240);
+
+  /* ---- colour: bleed surface (dark / ink sections) ---- */
+  --color-bleed:      oklch(14% 0.010 240);
+  --color-bleed-2:    oklch(20% 0.012 240);
+  --color-bleed-rule: oklch(32% 0.010 240);
+  --color-on-bleed:   oklch(95% 0.006 240);
+  --color-on-bleed-2: oklch(72% 0.006 240);
+
+  /* ---- colour: accent (used < 3% of any view) ---- */
+  --color-accent:     oklch(62% 0.17 35);
+  --color-accent-2:   oklch(68% 0.16 35);
+  --color-accent-ink: oklch(46% 0.16 35); /* accent, dark enough for small text on paper (4.5:1) */
+  --color-focus:      oklch(66% 0.19 35);
+
+  /* ---- font families (2 + 1 rule) ---- */
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-body:    "Switzer", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* ---- type scale — 1.25 major third ---- */
+  --text-xs:   0.64rem;
+  --text-sm:   0.8rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-3xl:  3.0518rem;
+  --text-4xl:  3.8147rem;
+  --text-display:      clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-display-hero: clamp(3rem, 4vw + 2.5rem, 6rem);
+
+  /* ---- spacing — 4pt scale ---- */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  /* ---- easing / duration ---- */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 100ms;
+  --dur-short: 180ms;
+  --dur-long:  380ms;
+
+  /* ---- rules / radius ---- */
+  --rule-hair: 1px;
+  --radius-sm: 2px;
+
+  /* ---- z-index scale ---- */
+  --z-base:     1;
+  --z-raised:   10;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-modal:    400;
+  --z-toast:    500;
+  --z-tooltip:  600;
+
+  /* ---- layout ---- */
+  --page-gutter: clamp(1.25rem, 4vw, 3rem);
+  --page-max: 76rem;
+}
