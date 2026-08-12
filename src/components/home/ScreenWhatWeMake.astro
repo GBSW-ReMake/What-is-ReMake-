@@ -1,58 +1,37 @@
 ---
-const cards = [
-  {
-    tag: "Overview",
-    title: "GONE",
-    lede: "One platform.\nBuilt by students.",
-    desc: "학교의 다양한 서비스를 하나로. 학생들이 직접 기획하고 개발한 서비스입니다.",
-    cta: { href: "/projects/gone", label: "View Project →" },
-  },
-  {
-    tag: "Server",
-    title: "Server",
-    lede: "Runs it all.",
-    desc: "GONE의 데이터와 로직을 처리하는 백엔드 서버.",
-  },
-  {
-    tag: "Android",
-    title: "Android",
-    lede: "In your pocket.",
-    desc: "Android 사용자를 위한 클라이언트.",
-  },
-  {
-    tag: "iOS",
-    title: "iOS",
-    lede: "Native feel.",
-    desc: "iOS 사용자를 위한 클라이언트.",
-  },
-];
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects"))
+  .filter((p) => p.data.status === "active")
+  .sort((a, b) => a.data.order - b.data.order);
 ---
 
-<section class="screen screen--02" id="screen-what-we-make" aria-label="What We Make">
+<section class="screen screen--02" id="screen-what-we-make" aria-label="Project">
   <div class="wrap screen__head">
     <p class="screen__eyebrow reveal" style="--i:0">Project</p>
-    <h2 class="screen__display reveal" style="--i:1">GONE</h2>
-    <p class="screen__claim reveal" style="--i:2">One platform.<br />Built by students.</p>
+    <h2 class="screen__display reveal" style="--i:1">What we've made</h2>
+    <p class="screen__claim reveal" style="--i:2">프로젝트 개수로 허세 부리지 않습니다. 실제로 있는 것만 보여줍니다.</p>
   </div>
 
   <div class="project-rail reveal" style="--i:3">
-    <button class="project-rail__nav project-rail__nav--prev" type="button" data-rail-prev aria-label="이전 카드">←</button>
-    <ul class="project-rail__track" data-rail-track role="region" aria-label="GONE 프로젝트 구성" tabindex="0">
-      {cards.map((card) => (
+    {projects.length > 1 && (
+      <button class="project-rail__nav project-rail__nav--prev" type="button" data-rail-prev aria-label="이전 프로젝트">←</button>
+    )}
+    <ul class="project-rail__track" class:list={{ "is-single": projects.length <= 1 }} data-rail-track role="region" aria-label="프로젝트 목록" tabindex="0">
+      {projects.map((project) => (
         <li class="project-card" data-rail-card>
-          <div class="project-card__inner">
-            <span class="project-card__tag">{card.tag}</span>
-            <h3 class="project-card__title">{card.title}</h3>
-            <p class="project-card__lede">{card.lede.split("\n").map((line, i) => <>{i > 0 && <br />}{line}</>)}</p>
-            <p class="project-card__desc">{card.desc}</p>
-            {card.cta && (
-              <a class="link project-card__cta" href={card.cta.href}>{card.cta.label}</a>
-            )}
-          </div>
+          <a class="project-card__inner" href={`/projects/${project.id}`}>
+            <span class="project-card__tag">{project.data.stack.join(" · ")}</span>
+            <h3 class="project-card__title">{project.data.title}</h3>
+            <p class="project-card__desc">{project.data.tagline}</p>
+            <span class="project-card__cta">View Project →</span>
+          </a>
         </li>
       ))}
     </ul>
-    <button class="project-rail__nav project-rail__nav--next" type="button" data-rail-next aria-label="다음 카드">→</button>
+    {projects.length > 1 && (
+      <button class="project-rail__nav project-rail__nav--next" type="button" data-rail-next aria-label="다음 프로젝트">→</button>
+    )}
   </div>
 </section>
 
@@ -84,10 +63,8 @@ const cards = [
     margin: 0 0 var(--space-lg);
   }
   .screen__claim {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--text-2xl);
-    line-height: 1.2;
+    font-size: var(--text-md);
+    max-width: 44ch;
     margin: 0;
     color: var(--color-ink-2);
   }
@@ -112,6 +89,7 @@ const cards = [
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
+  .project-rail__track.is-single { justify-content: center; }
   .project-rail__track::-webkit-scrollbar { display: none; }
   .project-rail__track:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 
@@ -132,6 +110,12 @@ const cards = [
     color: var(--color-paper);
     padding: var(--space-xl);
     aspect-ratio: 3 / 4;
+    text-decoration: none;
+    transition: background-color var(--dur-short) var(--ease-out);
+  }
+  .project-card__inner:hover,
+  .project-card__inner:focus-visible {
+    background: color-mix(in oklch, var(--color-ink) 85%, var(--color-accent-ink) 15%);
   }
   .project-card__tag {
     font-family: var(--font-mono);
@@ -147,25 +131,22 @@ const cards = [
     margin: 0;
     letter-spacing: -0.01em;
   }
-  .project-card__lede {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--text-md);
-    margin: 0;
-    color: var(--color-on-bleed-2);
-  }
   .project-card__desc {
     font-size: var(--text-sm);
     color: var(--color-on-bleed-2);
-    margin: var(--space-sm) 0 0;
+    margin: var(--space-2xs) 0 0;
   }
   .project-card__cta {
     margin-top: var(--space-md);
+    display: inline-block;
+    width: fit-content;
+    font-size: var(--text-sm);
     color: var(--color-paper);
-    border-color: var(--color-on-bleed-2);
+    border-bottom: 1px solid var(--color-on-bleed-2);
+    transition: color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
   }
-  .project-card__cta:hover,
-  .project-card__cta:focus-visible {
+  .project-card__inner:hover .project-card__cta,
+  .project-card__inner:focus-visible .project-card__cta {
     color: var(--color-accent-2);
     border-color: var(--color-accent-2);
   }
