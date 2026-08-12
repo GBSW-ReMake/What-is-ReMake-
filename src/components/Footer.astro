@@ -1,0 +1,46 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="foot-letter">
+  <div class="wrap wrap--narrow">
+    <p class="foot-letter__close">Yours,<br><span class="foot-letter__sign">— GBSW ReMake</span></p>
+    <p class="foot-letter__ps muted">P.S. — 다음 작품은 당신이 만들 차례입니다.</p>
+    <p class="foot-letter__links">
+      <a class="link" href="https://github.com/GBSW-ReMake" target="_blank" rel="noopener">GitHub</a>
+      <a class="link" href="/projects">Projects</a>
+      <a class="link" href="/blog">Tech Blog</a>
+    </p>
+    <p class="foot-letter__meta muted">© {currentYear} GBSW ReMake. Built by students.</p>
+  </div>
+</footer>
+
+<style>
+  .foot-letter {
+    padding-block: var(--space-3xl) var(--space-2xl);
+    background: var(--color-paper);
+  }
+  .foot-letter__close {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-3xl);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .foot-letter__sign { font-weight: 800; }
+  .foot-letter__ps {
+    font-size: var(--text-md);
+    margin: var(--space-lg) 0 0;
+  }
+  .foot-letter__links {
+    display: flex;
+    gap: var(--space-lg);
+    margin: var(--space-xl) 0 0;
+  }
+  .foot-letter__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    margin: var(--space-xl) 0 0;
+  }
+</style>

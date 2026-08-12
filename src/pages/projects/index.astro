@@ -1,0 +1,51 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+
+const projects = (await getCollection("projects"))
+  .filter((p) => p.data.status === "active")
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title="Projects — GBSW ReMake" description="What we made. 학생들이 직접 기획하고 개발한 서비스들.">
+  <section class="section">
+    <div class="wrap">
+      <h1 class="head">What we made</h1>
+      <p class="dek">프로젝트 개수로 허세 부리지 않습니다. 실제로 있는 것만 보여줍니다.</p>
+      <div class="project-grid">
+        {projects.map((project) => (
+          <ProjectCard
+            slug={project.id}
+            title={project.data.title}
+            tagline={project.data.tagline}
+            stack={project.data.stack}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section { padding-block: var(--space-3xl); }
+  .head {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-display);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 var(--space-lg);
+  }
+  .dek {
+    font-size: var(--text-md);
+    color: var(--color-ink-2);
+    max-width: 40ch;
+    margin: 0 0 var(--space-xl);
+  }
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(0, min(22rem, 100%)));
+    gap: var(--space-xl);
+  }
+</style>

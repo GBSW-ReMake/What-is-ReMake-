@@ -1,0 +1,86 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { title, tagline, stack, links } = project.data;
+---
+
+<BaseLayout title={`${title} — GBSW ReMake`} description={tagline}>
+  <article class="section">
+    <div class="wrap wrap--narrow">
+      <a class="link back-link" href="/projects">← Projects</a>
+      <h1 class="head">{title}</h1>
+      <p class="tagline">{tagline}</p>
+      <p class="stack">{stack.join(" · ")}</p>
+      {links.repo || links.live ? (
+        <p class="links">
+          {links.live && <a class="link" href={links.live} target="_blank" rel="noopener">Live →</a>}
+          {links.repo && <a class="link" href={links.repo} target="_blank" rel="noopener">Repository →</a>}
+        </p>
+      ) : null}
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .section { padding-block: var(--space-3xl); }
+  .back-link { margin-bottom: var(--space-xl); }
+  .head {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-display);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: var(--space-lg) 0 var(--space-sm);
+  }
+  .tagline {
+    font-size: var(--text-lg);
+    color: var(--color-ink-2);
+    margin: 0 0 var(--space-sm);
+  }
+  .stack {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+    margin: 0 0 var(--space-md);
+  }
+  .links {
+    display: flex;
+    gap: var(--space-lg);
+    margin: 0 0 var(--space-2xl);
+  }
+  .prose {
+    max-width: 65ch;
+    padding-top: var(--space-xl);
+    border-top: var(--rule-hair) solid var(--color-rule);
+  }
+  .prose :global(h2) {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-2xl);
+    margin: var(--space-2xl) 0 var(--space-md);
+  }
+  .prose :global(h2:first-child) { margin-top: 0; }
+  .prose :global(p) {
+    font-size: var(--text-md);
+    line-height: 1.6;
+    margin: 0 0 var(--space-md);
+  }
+  .prose :global(p em) { color: var(--color-ink-2); }
+  .prose :global(img) { margin-block: var(--space-md); }
+</style>

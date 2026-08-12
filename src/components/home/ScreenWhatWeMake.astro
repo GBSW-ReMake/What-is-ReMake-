@@ -1,0 +1,197 @@
+---
+---
+
+<section class="screen screen--02" id="screen-what-we-make" aria-label="What We Make">
+  <div class="wrap screen__grid">
+    <div class="screen__copy">
+      <p class="screen__eyebrow reveal" style="--i:0">What we make</p>
+      <h2 class="screen__display reveal" style="--i:1">GONE</h2>
+      <p class="screen__claim reveal" style="--i:2">One platform.<br />Built by students.</p>
+      <p class="screen__lede reveal" style="--i:3">학생들이 직접 기획하고 개발한 서비스.</p>
+      <p class="screen__stack reveal" style="--i:4">Android · iOS · Server</p>
+      <a class="link screen__cta reveal" style="--i:5" href="/projects/gone">View Project →</a>
+    </div>
+
+    <div class="screen__devices" data-parallax-group>
+      <svg class="screen__lines" viewBox="0 0 400 300" aria-hidden="true">
+        <line class="line line--a" x1="200" y1="150" x2="70" y2="60" />
+        <line class="line line--b" x1="200" y1="150" x2="330" y2="60" />
+        <line class="line line--c" x1="200" y1="150" x2="200" y2="260" />
+      </svg>
+      <div class="device device--main" data-parallax="0.6">
+        <span class="device__label">GONE</span>
+      </div>
+      <div class="device device--android" data-parallax="1.2">
+        <span class="device__tag">Android</span>
+      </div>
+      <div class="device device--ios" data-parallax="1.4">
+        <span class="device__tag">iOS</span>
+      </div>
+      <div class="device device--server" data-parallax="0.9">
+        <span class="device__tag">Server</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .screen--02 {
+    min-height: calc(100dvh - 4.5rem);
+    display: flex;
+    align-items: center;
+    background: var(--color-paper);
+    padding-block: var(--space-3xl);
+  }
+  .screen__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items: center;
+  }
+  .screen__eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+    margin: 0 0 var(--space-md);
+  }
+  .screen__display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-display-screen);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0 0 var(--space-lg);
+  }
+  .screen__claim {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-2xl);
+    line-height: 1.2;
+    margin: 0 0 var(--space-md);
+  }
+  .screen__lede {
+    font-size: var(--text-md);
+    color: var(--color-ink-2);
+    margin: 0 0 var(--space-sm);
+  }
+  .screen__stack {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+    margin: 0 0 var(--space-xl);
+  }
+  .screen__cta { font-size: var(--text-md); }
+
+  .screen__devices {
+    position: relative;
+    aspect-ratio: 4 / 3;
+  }
+  .screen__lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .line {
+    stroke: var(--color-rule);
+    stroke-width: 1;
+    stroke-dasharray: 300;
+    stroke-dashoffset: 300;
+  }
+  .line.is-drawn {
+    animation: draw-line 900ms var(--ease-out) forwards;
+  }
+  @keyframes draw-line {
+    to { stroke-dashoffset: 0; }
+  }
+
+  .device {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-paper);
+    border: var(--rule-hair) solid var(--color-rule);
+    transition: transform 200ms var(--ease-out);
+  }
+  .device--main {
+    inset: 30% 32%;
+    background: var(--color-ink);
+  }
+  .device--main .device__label {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-lg);
+    color: var(--color-paper);
+    letter-spacing: -0.01em;
+  }
+  .device--android { top: 2%; left: 8%; width: 30%; height: 26%; }
+  .device--ios { top: 2%; right: 8%; width: 30%; height: 26%; }
+  .device--server { bottom: 2%; left: 35%; width: 30%; height: 22%; }
+  .device__tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+  }
+
+  @media (max-width: 60rem) {
+    .screen--02 { min-height: auto; padding-block: var(--space-2xl); }
+    .screen__grid { grid-template-columns: 1fr; }
+    .screen__devices { order: -1; max-width: 24rem; margin-inline: auto; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .device { transition: none; }
+  }
+</style>
+
+<script>
+  const group = document.querySelector<HTMLElement>("[data-parallax-group]");
+  const lines = document.querySelectorAll<SVGLineElement>(".screen__lines .line");
+
+  if (group) {
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries, obs) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              lines.forEach((line, i) => {
+                setTimeout(() => line.classList.add("is-drawn"), i * 150);
+              });
+              obs.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.4 }
+      );
+      observer.observe(group);
+    } else {
+      lines.forEach((line) => line.classList.add("is-drawn"));
+    }
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    if (!reduceMotion && finePointer) {
+      const devices = group.querySelectorAll<HTMLElement>("[data-parallax]");
+      group.addEventListener("mousemove", (event) => {
+        const rect = group.getBoundingClientRect();
+        const relX = (event.clientX - rect.left) / rect.width - 0.5;
+        const relY = (event.clientY - rect.top) / rect.height - 0.5;
+        devices.forEach((device) => {
+          const strength = Number(device.dataset.parallax ?? 1);
+          device.style.transform = `translate(${relX * strength * 8}px, ${relY * strength * 8}px)`;
+        });
+      });
+      group.addEventListener("mouseleave", () => {
+        devices.forEach((device) => { device.style.transform = "translate(0, 0)"; });
+      });
+    }
+  }
+</script>

@@ -1,0 +1,169 @@
+/* Hallmark · genre: editorial · theme: custom (black/white, warm-ember accent, dual light/dark surfaces)
+ * fonts: Bricolage Grotesque (display) + Switzer (body) + JetBrains Mono (outlier)
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  overflow-x: clip;
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+
+.muted { color: var(--color-ink-2); }
+.on-bleed { color: var(--color-on-bleed); }
+.on-bleed .muted,
+.on-bleed-muted { color: var(--color-on-bleed-2); }
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  background: var(--color-accent-ink);
+  color: var(--color-paper);
+  padding: var(--space-sm) var(--space-md);
+  z-index: var(--z-modal);
+}
+.skip-link:focus {
+  left: var(--space-md);
+  top: var(--space-md);
+}
+
+/* ---- layout utilities ---- */
+
+.wrap {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+.wrap--narrow { max-width: 42rem; }
+.wrap--right {
+  max-width: 46rem;
+  margin-inline: auto 0;
+  text-align: right;
+}
+.wrap--right > * {
+  margin-inline-start: auto;
+  margin-inline-end: 0;
+}
+
+/* ---- brand mark: white chip, black italic "ReMake" ---- */
+
+.brand-mark {
+  display: inline-block;
+  font-style: italic;
+  font-weight: 800;
+  background: #fff;
+  color: #000;
+  padding: 0 0.16em;
+  line-height: 1.08;
+  vertical-align: -0.03em;
+}
+
+/* ---- buttons ---- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  text-decoration: none;
+  padding: var(--space-md) var(--space-xl);
+  white-space: nowrap;
+  min-height: 44px;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+}
+.btn--block {
+  background: var(--color-accent);
+  color: var(--color-bleed);
+}
+.btn--block:hover,
+.btn--block:focus-visible { background: var(--color-accent-2); }
+.btn--outline {
+  background: transparent;
+  color: inherit;
+  border: var(--rule-hair) solid var(--color-on-bleed-2);
+}
+.btn--outline:hover,
+.btn--outline:focus-visible {
+  border-color: var(--color-accent-2);
+  color: var(--color-accent-2);
+}
+.btn:active { transform: translateY(1px); }
+
+/* ---- typographic link ---- */
+
+.link {
+  display: inline-block;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 1px solid currentColor;
+  transition: color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+}
+.link:hover,
+.link:focus-visible { color: var(--color-accent-ink); border-color: var(--color-accent-ink); }
+.on-bleed .link:hover,
+.on-bleed .link:focus-visible { color: var(--color-accent-2); border-color: var(--color-accent-2); }
+
+/* ---- reveal (shared one-shot IntersectionObserver reveal, mobile + no-js fallback) ---- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.reveal.is-visible {
+  animation: reveal var(--dur-long) var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes reveal {
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal.is-visible {
+    animation: reveal-reduced 150ms linear forwards;
+    animation-delay: 0ms;
+  }
+  @keyframes reveal-reduced { to { opacity: 1; } }
+}
+.no-js .reveal { opacity: 1; transform: none; }
+
+/* Global reduced-motion safety net for every small CSS-only hover/transition
+   across the site (member/project card hovers, nav underlines, buttons, etc).
+   The larger scroll-driven pieces (canvas particles, GSAP ScrollTrigger pins)
+   branch explicitly in their own scripts via matchMedia — this only covers
+   the small stuff so no component has to remember to gate it individually. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+  }
+}

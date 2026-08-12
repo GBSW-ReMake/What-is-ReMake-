@@ -1,0 +1,79 @@
+---
+interface Props {
+  slug: string;
+  title: string;
+  tagline: string;
+  stack: string[];
+}
+const { slug, title, tagline, stack } = Astro.props;
+---
+
+<article class="project">
+  <a class="project__link" href={`/projects/${slug}`}>
+    <div class="project__media" aria-hidden="true"><span class="project__mark">{title}</span></div>
+    <div class="project__meta">
+      <h3 class="project__name">{title}</h3>
+      <p class="project__tagline">{tagline}</p>
+      <p class="project__stack">{stack.join(" · ")}</p>
+      <span class="project__cta">View Project <span aria-hidden="true">→</span></span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .project__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .project__media {
+    aspect-ratio: 16 / 10;
+    background: var(--color-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .project__mark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-3xl);
+    color: var(--color-paper);
+    letter-spacing: -0.02em;
+    transition: transform var(--dur-long) var(--ease-out);
+  }
+  .project__link:hover .project__mark,
+  .project__link:focus-visible .project__mark { transform: scale(1.03); }
+  .project__meta { padding-top: var(--space-md); }
+  .project__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    margin: 0 0 var(--space-2xs);
+  }
+  .project__tagline {
+    margin: 0 0 var(--space-sm);
+    color: var(--color-ink-2);
+  }
+  .project__stack {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+    margin: 0 0 var(--space-sm);
+  }
+  .project__cta {
+    display: inline-block;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-ink);
+    transition: border-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+  }
+  .project__link:hover .project__cta,
+  .project__link:focus-visible .project__cta {
+    color: var(--color-accent-ink);
+    border-color: var(--color-accent-ink);
+  }
+</style>

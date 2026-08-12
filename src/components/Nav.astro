@@ -1,0 +1,122 @@
+---
+const navLinks = [
+  { href: "/", label: "홈" },
+  { href: "/projects", label: "프로젝트" },
+  { href: "/blog", label: "블로그" },
+  { href: "/#members", label: "팀" },
+];
+---
+
+<header class="nav-mast">
+  <div class="wrap mast-row">
+    <a class="mast-brand" href="/" aria-label="GBSW ReMake 홈으로 이동">
+      GBSW <span class="brand-mark">ReMake</span>
+    </a>
+    <button class="mast-toggle" type="button" aria-expanded="false" aria-controls="mast-nav-list">Menu</button>
+    <nav class="mast-nav" aria-label="주요">
+      <ul id="mast-nav-list">
+        {navLinks.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav-mast {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background: color-mix(in oklch, var(--color-paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: var(--rule-hair) solid var(--color-rule);
+  }
+  .mast-row {
+    padding-block: var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xl);
+  }
+  .mast-brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .mast-toggle {
+    display: none;
+    background: none;
+    border: var(--rule-hair) solid var(--color-rule);
+    padding: var(--space-2xs) var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    color: var(--color-ink);
+    min-height: 44px;
+  }
+  .mast-nav ul {
+    display: inline-flex;
+    gap: var(--space-lg);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .mast-nav a {
+    text-decoration: none;
+    font-size: var(--text-sm);
+    white-space: nowrap;
+    border-bottom: 1px solid transparent;
+    padding-block: var(--space-3xs);
+    transition: border-color var(--dur-short) var(--ease-out);
+  }
+  .mast-nav a:hover,
+  .mast-nav a:focus-visible { border-color: var(--color-accent); }
+
+  @media (max-width: 40rem) {
+    .mast-toggle { display: block; }
+    .mast-nav {
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      background: var(--color-paper);
+      border-bottom: var(--rule-hair) solid var(--color-rule);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--dur-long) var(--ease-in-out);
+    }
+    .mast-nav.is-open { max-height: 16rem; }
+    .mast-nav ul {
+      flex-direction: column;
+      gap: 0;
+      padding: var(--space-sm) var(--page-gutter) var(--space-md);
+    }
+    .mast-nav a { display: block; padding-block: var(--space-sm); }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>(".mast-toggle");
+  const nav = document.querySelector<HTMLElement>(".mast-nav");
+
+  if (toggle && nav) {
+    toggle.addEventListener("click", () => {
+      const isOpen = nav.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(isOpen));
+      toggle.textContent = isOpen ? "Close" : "Menu";
+    });
+    nav.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        nav.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.textContent = "Menu";
+      });
+    });
+  }
+</script>

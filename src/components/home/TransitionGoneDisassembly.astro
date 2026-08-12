@@ -1,0 +1,68 @@
+---
+const labels = ["APP", "COMPONENT", "CODE", "IDEA"];
+---
+
+<div class="gone-disassembly" data-disassembly>
+  <div class="wrap gone-disassembly__inner">
+    <p class="gone-disassembly__mark" data-disassembly-mark aria-hidden="true">GONE</p>
+    <ol class="gone-disassembly__labels">
+      {labels.map((label) => (
+        <li data-disassembly-label>{label}</li>
+      ))}
+    </ol>
+    <p class="gone-disassembly__question" data-disassembly-question>What makes it worth building?</p>
+  </div>
+</div>
+
+<style>
+  .gone-disassembly {
+    min-height: calc(100dvh - 4.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-paper);
+  }
+  .gone-disassembly__inner {
+    text-align: center;
+  }
+  .gone-disassembly__mark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-4xl);
+    letter-spacing: -0.02em;
+    margin: 0 0 var(--space-xl);
+    color: var(--color-ink);
+  }
+  .gone-disassembly__labels {
+    list-style: none;
+    margin: 0 0 var(--space-2xl);
+    padding: 0;
+    display: grid;
+    gap: var(--space-sm);
+  }
+  .gone-disassembly__labels li {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    letter-spacing: 0.06em;
+    color: var(--color-ink-2);
+    opacity: 0;
+  }
+  .gone-disassembly__question {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-2xl);
+    margin: 0;
+    opacity: 0;
+  }
+
+  @media (max-width: 60rem) {
+    .gone-disassembly { min-height: auto; padding-block: var(--space-3xl); }
+  }
+</style>
+
+<script>
+  import { setupGoneDisassembly } from "./transitions";
+
+  const el = document.querySelector<HTMLElement>("[data-disassembly]");
+  if (el) setupGoneDisassembly(el);
+</script>
