@@ -10,10 +10,9 @@ const projects = (await getCollection("projects"))
   <div class="wrap screen__head">
     <p class="screen__eyebrow reveal" style="--i:0">Project</p>
     <h2 class="screen__display reveal" style="--i:1">What we've made</h2>
-    <p class="screen__claim reveal" style="--i:2">프로젝트 개수로 허세 부리지 않습니다. 실제로 있는 것만 보여줍니다.</p>
   </div>
 
-  <div class="project-rail reveal" style="--i:3">
+  <div class="project-rail reveal" style="--i:2">
     {projects.length > 1 && (
       <button class="project-rail__nav project-rail__nav--prev" type="button" data-rail-prev aria-label="이전 프로젝트">←</button>
     )}

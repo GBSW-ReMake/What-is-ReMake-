@@ -87,6 +87,7 @@
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { ParticleField, prefersReducedMotion } from "../../lib/particle-text";
+  import { refreshOnSettle } from "../../lib/scroll-refresh";
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -133,22 +134,21 @@
           field.render(Math.max(0, Math.min(1, formProgress)));
           canvas.style.opacity = String(opacity);
 
-          // Dim the hero copy while the particle formation holds, so REMAKE reads
-          // clearly instead of fighting the solid heading text for attention.
-          const DIMMED = 0.25;
+          // Fade the hero copy out entirely once the particle formation holds,
+          // so the fully-formed REMAKE is the only thing on screen at the end.
           let contentOpacity: number;
           if (p < 0.15) {
             contentOpacity = 1;
           } else if (p < 0.45) {
-            contentOpacity = 1 - (1 - DIMMED) * ((p - 0.15) / 0.3);
-          } else if (p < 0.8) {
-            contentOpacity = DIMMED;
+            contentOpacity = 1 - (p - 0.15) / 0.3;
           } else {
-            contentOpacity = DIMMED + (1 - DIMMED) * ((p - 0.8) / 0.2);
+            contentOpacity = 0;
           }
           content.style.opacity = String(contentOpacity);
         },
       });
+
+      refreshOnSettle(ScrollTrigger);
 
       let resizeRaf = 0;
       window.addEventListener("resize", () => {

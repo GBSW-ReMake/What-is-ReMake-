@@ -94,13 +94,14 @@ const stages = ["Build", "Launch", "Operate", "Learn", "ReMake"];
   }
   .cycle-ring__track {
     fill: none;
-    stroke: var(--color-bleed-rule);
-    stroke-width: 1;
+    stroke: var(--color-on-bleed-2);
+    stroke-width: 1.5;
+    opacity: 0.4;
   }
   .cycle-ring__fill {
     fill: none;
     stroke: var(--color-accent-2);
-    stroke-width: 2;
+    stroke-width: 4;
     stroke-linecap: round;
   }
 
@@ -112,20 +113,25 @@ const stages = ["Build", "Launch", "Operate", "Learn", "ReMake"];
     transform: rotate(var(--angle)) translate(var(--radius)) rotate(calc(-1 * var(--angle)));
     display: grid;
     justify-items: center;
-    gap: var(--space-3xs);
+    gap: var(--space-2xs);
     text-align: center;
-    color: var(--color-on-bleed-2);
-    transition: color 400ms var(--ease-out);
+    color: var(--color-on-bleed);
+    transition: color 400ms var(--ease-out), transform 400ms var(--ease-out);
   }
-  .cycle-node.is-active { color: var(--color-accent-2); }
+  .cycle-node.is-active {
+    color: var(--color-accent-2);
+    transform: rotate(var(--angle)) translate(var(--radius)) rotate(calc(-1 * var(--angle))) scale(1.1);
+  }
   .cycle-node__num {
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
+    color: var(--color-on-bleed-2);
   }
+  .cycle-node.is-active .cycle-node__num { color: var(--color-accent-2); }
   .cycle-node__label {
     font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--text-sm);
+    font-weight: 800;
+    font-size: var(--text-md);
     white-space: nowrap;
   }
 
@@ -140,6 +146,7 @@ const stages = ["Build", "Launch", "Operate", "Learn", "ReMake"];
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { refreshOnSettle } from "../../lib/scroll-refresh";
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -180,6 +187,7 @@ const stages = ["Build", "Launch", "Operate", "Learn", "ReMake"];
         pin: true,
         onUpdate: (self) => applyProgress(self.progress),
       });
+      refreshOnSettle(ScrollTrigger);
     }
   }
 </script>

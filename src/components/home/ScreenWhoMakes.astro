@@ -150,6 +150,7 @@ const members = [
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { ParticleField, prefersReducedMotion } from "../../lib/particle-text";
+  import { refreshOnSettle } from "../../lib/scroll-refresh";
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -174,6 +175,7 @@ const members = [
         scrub: 0.6,
         onUpdate: (self) => field.render(self.progress),
       });
+      refreshOnSettle(ScrollTrigger);
 
       let resizeRaf = 0;
       window.addEventListener("resize", () => {
