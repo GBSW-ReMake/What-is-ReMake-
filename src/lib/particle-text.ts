@@ -151,7 +151,7 @@ export class ParticleField {
       scatterX: Math.random() * this.width,
       scatterY: Math.random() * this.height,
       delay: Math.random() * 0.35,
-      size: Math.random() * 1.6 + 0.8,
+      size: Math.random() * 1.8 + 1.2,
     }));
   }
 

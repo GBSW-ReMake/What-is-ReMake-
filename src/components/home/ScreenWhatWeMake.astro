@@ -1,36 +1,58 @@
 ---
+const cards = [
+  {
+    tag: "Overview",
+    title: "GONE",
+    lede: "One platform.\nBuilt by students.",
+    desc: "학교의 다양한 서비스를 하나로. 학생들이 직접 기획하고 개발한 서비스입니다.",
+    cta: { href: "/projects/gone", label: "View Project →" },
+  },
+  {
+    tag: "Server",
+    title: "Server",
+    lede: "Runs it all.",
+    desc: "GONE의 데이터와 로직을 처리하는 백엔드 서버.",
+  },
+  {
+    tag: "Android",
+    title: "Android",
+    lede: "In your pocket.",
+    desc: "Android 사용자를 위한 클라이언트.",
+  },
+  {
+    tag: "iOS",
+    title: "iOS",
+    lede: "Native feel.",
+    desc: "iOS 사용자를 위한 클라이언트.",
+  },
+];
 ---
 
 <section class="screen screen--02" id="screen-what-we-make" aria-label="What We Make">
-  <div class="wrap screen__grid">
-    <div class="screen__copy">
-      <p class="screen__eyebrow reveal" style="--i:0">What we make</p>
-      <h2 class="screen__display reveal" style="--i:1">GONE</h2>
-      <p class="screen__claim reveal" style="--i:2">One platform.<br />Built by students.</p>
-      <p class="screen__lede reveal" style="--i:3">학생들이 직접 기획하고 개발한 서비스.</p>
-      <p class="screen__stack reveal" style="--i:4">Android · iOS · Server</p>
-      <a class="link screen__cta reveal" style="--i:5" href="/projects/gone">View Project →</a>
-    </div>
+  <div class="wrap screen__head">
+    <p class="screen__eyebrow reveal" style="--i:0">Project</p>
+    <h2 class="screen__display reveal" style="--i:1">GONE</h2>
+    <p class="screen__claim reveal" style="--i:2">One platform.<br />Built by students.</p>
+  </div>
 
-    <div class="screen__devices" data-parallax-group>
-      <svg class="screen__lines" viewBox="0 0 400 300" aria-hidden="true">
-        <line class="line line--a" x1="200" y1="150" x2="70" y2="60" />
-        <line class="line line--b" x1="200" y1="150" x2="330" y2="60" />
-        <line class="line line--c" x1="200" y1="150" x2="200" y2="260" />
-      </svg>
-      <div class="device device--main" data-parallax="0.6">
-        <span class="device__label">GONE</span>
-      </div>
-      <div class="device device--android" data-parallax="1.2">
-        <span class="device__tag">Android</span>
-      </div>
-      <div class="device device--ios" data-parallax="1.4">
-        <span class="device__tag">iOS</span>
-      </div>
-      <div class="device device--server" data-parallax="0.9">
-        <span class="device__tag">Server</span>
-      </div>
-    </div>
+  <div class="project-rail reveal" style="--i:3">
+    <button class="project-rail__nav project-rail__nav--prev" type="button" data-rail-prev aria-label="이전 카드">←</button>
+    <ul class="project-rail__track" data-rail-track role="region" aria-label="GONE 프로젝트 구성" tabindex="0">
+      {cards.map((card) => (
+        <li class="project-card" data-rail-card>
+          <div class="project-card__inner">
+            <span class="project-card__tag">{card.tag}</span>
+            <h3 class="project-card__title">{card.title}</h3>
+            <p class="project-card__lede">{card.lede.split("\n").map((line, i) => <>{i > 0 && <br />}{line}</>)}</p>
+            <p class="project-card__desc">{card.desc}</p>
+            {card.cta && (
+              <a class="link project-card__cta" href={card.cta.href}>{card.cta.label}</a>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+    <button class="project-rail__nav project-rail__nav--next" type="button" data-rail-next aria-label="다음 카드">→</button>
   </div>
 </section>
 
@@ -38,20 +60,17 @@
   .screen--02 {
     min-height: calc(100dvh - 4.5rem);
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-2xl);
     background: var(--color-paper);
     padding-block: var(--space-3xl);
-  }
-  .screen__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-2xl);
-    align-items: center;
+    overflow: clip;
   }
   .screen__eyebrow {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--color-ink-2);
     margin: 0 0 var(--space-md);
@@ -69,129 +88,170 @@
     font-weight: 700;
     font-size: var(--text-2xl);
     line-height: 1.2;
-    margin: 0 0 var(--space-md);
-  }
-  .screen__lede {
-    font-size: var(--text-md);
+    margin: 0;
     color: var(--color-ink-2);
-    margin: 0 0 var(--space-sm);
   }
-  .screen__stack {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-ink-2);
-    margin: 0 0 var(--space-xl);
-  }
-  .screen__cta { font-size: var(--text-md); }
 
-  .screen__devices {
+  .project-rail {
     position: relative;
-    aspect-ratio: 4 / 3;
-  }
-  .screen__lines {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-  .line {
-    stroke: var(--color-rule);
-    stroke-width: 1;
-    stroke-dasharray: 300;
-    stroke-dashoffset: 300;
-  }
-  .line.is-drawn {
-    animation: draw-line 900ms var(--ease-out) forwards;
-  }
-  @keyframes draw-line {
-    to { stroke-dashoffset: 0; }
-  }
-
-  .device {
-    position: absolute;
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: var(--color-paper);
-    border: var(--rule-hair) solid var(--color-rule);
-    transition: transform 200ms var(--ease-out);
+    gap: var(--space-md);
+    padding-inline: var(--page-gutter);
   }
-  .device--main {
-    inset: 30% 32%;
+  .project-rail__track {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-lg) 0;
+    display: flex;
+    gap: var(--space-xl);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 10%;
+    perspective: 1400px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .project-rail__track::-webkit-scrollbar { display: none; }
+  .project-rail__track:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
+
+  .project-card {
+    flex: 0 0 auto;
+    width: min(20rem, 78vw);
+    scroll-snap-align: center;
+    transform-style: preserve-3d;
+    transition: transform 300ms var(--ease-out), opacity 300ms var(--ease-out);
+    will-change: transform;
+  }
+  .project-card__inner {
+    height: 100%;
+    display: grid;
+    align-content: start;
+    gap: var(--space-sm);
     background: var(--color-ink);
-  }
-  .device--main .device__label {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: var(--text-lg);
     color: var(--color-paper);
-    letter-spacing: -0.01em;
+    padding: var(--space-xl);
+    aspect-ratio: 3 / 4;
   }
-  .device--android { top: 2%; left: 8%; width: 30%; height: 26%; }
-  .device--ios { top: 2%; right: 8%; width: 30%; height: 26%; }
-  .device--server { bottom: 2%; left: 35%; width: 30%; height: 22%; }
-  .device__tag {
+  .project-card__tag {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--color-ink-2);
+    color: var(--color-on-bleed-2);
+  }
+  .project-card__title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-2xl);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .project-card__lede {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-md);
+    margin: 0;
+    color: var(--color-on-bleed-2);
+  }
+  .project-card__desc {
+    font-size: var(--text-sm);
+    color: var(--color-on-bleed-2);
+    margin: var(--space-sm) 0 0;
+  }
+  .project-card__cta {
+    margin-top: var(--space-md);
+    color: var(--color-paper);
+    border-color: var(--color-on-bleed-2);
+  }
+  .project-card__cta:hover,
+  .project-card__cta:focus-visible {
+    color: var(--color-accent-2);
+    border-color: var(--color-accent-2);
+  }
+
+  .project-rail__nav {
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: var(--rule-hair) solid var(--color-rule);
+    color: var(--color-ink);
+    font-size: var(--text-md);
+    cursor: pointer;
+    transition: border-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+  }
+  .project-rail__nav:hover,
+  .project-rail__nav:focus-visible {
+    border-color: var(--color-accent-ink);
+    color: var(--color-accent-ink);
   }
 
   @media (max-width: 60rem) {
-    .screen--02 { min-height: auto; padding-block: var(--space-2xl); }
-    .screen__grid { grid-template-columns: 1fr; }
-    .screen__devices { order: -1; max-width: 24rem; margin-inline: auto; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .device { transition: none; }
+    .screen--02 { min-height: auto; }
+    .project-rail__nav { display: none; }
+    .project-rail { padding-inline: 0; }
+    .project-rail__track { scroll-padding-inline: var(--page-gutter); padding-inline: var(--page-gutter); }
   }
 </style>
 
 <script>
-  const group = document.querySelector<HTMLElement>("[data-parallax-group]");
-  const lines = document.querySelectorAll<SVGLineElement>(".screen__lines .line");
+  const track = document.querySelector<HTMLElement>("[data-rail-track]");
+  const cards = document.querySelectorAll<HTMLElement>("[data-rail-card]");
+  const prevBtn = document.querySelector<HTMLButtonElement>("[data-rail-prev]");
+  const nextBtn = document.querySelector<HTMLButtonElement>("[data-rail-next]");
 
-  if (group) {
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(
-        (entries, obs) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              lines.forEach((line, i) => {
-                setTimeout(() => line.classList.add("is-drawn"), i * 150);
-              });
-              obs.unobserve(entry.target);
-            }
-          }
-        },
-        { threshold: 0.4 }
-      );
-      observer.observe(group);
-    } else {
-      lines.forEach((line) => line.classList.add("is-drawn"));
-    }
-
+  if (track && cards.length) {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const MAX_ROTATE = 26; // degrees
 
-    if (!reduceMotion && finePointer) {
-      const devices = group.querySelectorAll<HTMLElement>("[data-parallax]");
-      group.addEventListener("mousemove", (event) => {
-        const rect = group.getBoundingClientRect();
-        const relX = (event.clientX - rect.left) / rect.width - 0.5;
-        const relY = (event.clientY - rect.top) / rect.height - 0.5;
-        devices.forEach((device) => {
-          const strength = Number(device.dataset.parallax ?? 1);
-          device.style.transform = `translate(${relX * strength * 8}px, ${relY * strength * 8}px)`;
-        });
+    const applyTilt = () => {
+      const trackRect = track.getBoundingClientRect();
+      const trackCenter = trackRect.left + trackRect.width / 2;
+
+      cards.forEach((card) => {
+        const cardRect = card.getBoundingClientRect();
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        const offset = (cardCenter - trackCenter) / (trackRect.width / 2);
+        const clamped = Math.max(-1, Math.min(1, offset));
+
+        if (reduceMotion) {
+          card.style.transform = "none";
+          card.style.opacity = "1";
+          return;
+        }
+
+        const rotateY = clamped * -MAX_ROTATE;
+        const scale = 1 - Math.abs(clamped) * 0.12;
+        const translateZ = -Math.abs(clamped) * 60;
+        card.style.transform = `rotateY(${rotateY}deg) scale(${scale}) translateZ(${translateZ}px)`;
+        card.style.opacity = String(1 - Math.abs(clamped) * 0.35);
       });
-      group.addEventListener("mouseleave", () => {
-        devices.forEach((device) => { device.style.transform = "translate(0, 0)"; });
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        applyTilt();
+        ticking = false;
       });
-    }
+    };
+
+    track.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    applyTilt();
+
+    const scrollByCard = (direction: 1 | -1) => {
+      const card = cards[0];
+      const step = card.getBoundingClientRect().width + 32; // + gap
+      track.scrollBy({ left: step * direction, behavior: reduceMotion ? "auto" : "smooth" });
+    };
+
+    prevBtn?.addEventListener("click", () => scrollByCard(-1));
+    nextBtn?.addEventListener("click", () => scrollByCard(1));
   }
 </script>
