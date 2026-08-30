@@ -5,94 +5,291 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 const posts = (await getCollection("blog"))
   .filter((post) => import.meta.env.PROD ? !post.data.draft : true)
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const allTags = Array.from(
+  new Set(
+    posts
+      .flatMap((post) => post.data.tags)
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+  )
+).sort((a, b) => a.localeCompare(b, "ko"));
+
+const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+const formatDate = (date: Date) => dateFormatter.format(date).replace(/\s/g, "").replace(/\.$/, "");
 ---
 
 <BaseLayout title="Tech Blog — GBSW ReMake" description="What we learned. 실제 개발·운영하면서 겪은 문제와 해결 과정.">
-  <section class="section">
-    <div class="wrap">
-      <h1 class="head">What we learned</h1>
-      <p class="dek">단순 튜토리얼이 아니라, 실제로 만들고 운영하면서 겪은 문제와 해결 과정을 기록합니다.</p>
-
-      {posts.length === 0 ? (
-        <p class="empty">아직 올라온 글이 없습니다. 첫 글을 기다리고 있어요.</p>
-      ) : (
-        <ul class="post-list">
-          {posts.map((post) => (
-            <li class="post">
-              <a class="post__link" href={`/blog/${post.id}`}>
-                <p class="post__meta">
-                  {post.data.publishDate.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}
-                  {" · "}{post.data.author}
-                  {post.data.draft && <span class="post__draft">DRAFT</span>}
-                </p>
-                <h2 class="post__title">{post.data.title}</h2>
-                <p class="post__description">{post.data.description}</p>
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+  <section class="hero on-bleed">
+    <div class="wrap hero__wrap">
+      <p class="hero__eyebrow reveal" style="--i:0">ReMake engineering notes</p>
+      <h1 class="hero__head reveal" style="--i:1">TECH BLOG</h1>
+      <p class="hero__dek reveal" style="--i:2">실제 제품을 만들고 운영하면서 배운 문제 해결 과정을 기록합니다.</p>
     </div>
   </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="blog" data-blog-filter>
+        <div class="filters" role="group" aria-label="블로그 태그 필터">
+          <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">ALL</button>
+          {allTags.map((tag) => (
+            <button class="filter" type="button" data-filter={tag.toLowerCase()} aria-pressed="false">{tag}</button>
+          ))}
+        </div>
+
+        {posts.length === 0 ? (
+          <p class="empty">아직 올라온 글이 없습니다. 첫 글을 기다리고 있어요.</p>
+        ) : (
+          <>
+            <ul class="post-list" data-post-list>
+              {posts.map((post, index) => (
+                <li
+                  class="post reveal"
+                  style={`--i:${index + 1}`}
+                  data-post
+                  data-tags={post.data.tags.map((tag) => tag.toLowerCase()).join("|")}
+                >
+                  <a class="post__link" href={`/blog/${post.id}`}>
+                    <div class="post__main">
+                      <h2 class="post__title">{post.data.title}</h2>
+                      <p class="post__description">{post.data.description}</p>
+                      <p class="post__meta">
+                        <span>{formatDate(post.data.publishDate)}</span>
+                        <span>{post.data.author}</span>
+                        {post.data.draft && <span class="post__draft">DRAFT</span>}
+                      </p>
+                    </div>
+                    <div class="post__tags" aria-label="post tags">
+                      {post.data.tags.map((tag) => (
+                        <span class="tag-chip">{tag}</span>
+                      ))}
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p class="empty empty--hidden" data-empty-filter>선택한 태그에 해당하는 글이 없습니다.</p>
+          </>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const root = document.querySelector("[data-blog-filter]");
+    if (root) {
+      const buttons = root.querySelectorAll("[data-filter]");
+      const posts = root.querySelectorAll("[data-post]");
+      const empty = root.querySelector("[data-empty-filter]");
+
+      const applyFilter = (filter) => {
+        let visibleCount = 0;
+
+        posts.forEach((post) => {
+          const tags = post.getAttribute("data-tags") || "";
+          const visible = filter === "all" || tags.split("|").includes(filter);
+          post.toggleAttribute("hidden", !visible);
+          if (visible) visibleCount += 1;
+        });
+
+        if (empty) empty.classList.toggle("empty--hidden", visibleCount > 0);
+
+        buttons.forEach((button) => {
+          const active = button.getAttribute("data-filter") === filter;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-pressed", String(active));
+        });
+      };
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const filter = button.getAttribute("data-filter") || "all";
+          applyFilter(filter);
+        });
+      });
+    }
+  </script>
 </BaseLayout>
 
 <style>
-  .section { padding-block: var(--space-3xl); }
-  .head {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: var(--text-display);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    margin: 0 0 var(--space-lg);
+  .hero {
+    position: relative;
+    min-height: min(36rem, 62vh);
+    display: grid;
+    align-items: end;
+    background:
+      linear-gradient(90deg, color-mix(in oklch, var(--color-bleed) 96%, black) 0%, color-mix(in oklch, var(--color-bleed) 85%, black) 56%, color-mix(in oklch, var(--color-bleed-2) 78%, #00d08a) 100%);
+    overflow: clip;
   }
-  .dek {
-    font-size: var(--text-md);
-    color: var(--color-ink-2);
-    max-width: 48ch;
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 78% 18%, color-mix(in oklch, #00d08a 58%, transparent) 0 4.5rem, transparent 4.6rem),
+      repeating-linear-gradient(to right, transparent 0 5.5rem, color-mix(in oklch, #00d08a 45%, transparent) 5.5rem 5.58rem),
+      repeating-linear-gradient(to bottom, transparent 0 5.5rem, color-mix(in oklch, #00d08a 45%, transparent) 5.5rem 5.58rem);
+    opacity: 0.22;
+    pointer-events: none;
+  }
+  .hero__wrap {
+    position: relative;
+    z-index: 1;
+    padding-block: clamp(4rem, 14vh, 8rem);
+  }
+  .hero__eyebrow {
+    margin: 0 0 var(--space-sm);
+    font-family: var(--font-mono);
+    color: color-mix(in oklch, var(--color-on-bleed-2) 84%, #00d08a);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    font-size: var(--text-sm);
+  }
+  .hero__head {
+    margin: 0;
+    font-family: var(--font-display);
+    color: var(--color-on-bleed);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-size: clamp(2.8rem, 8vw, 6rem);
+  }
+  .hero__dek {
+    margin: var(--space-lg) 0 0;
+    max-width: 52ch;
+    color: var(--color-on-bleed-2);
+    font-size: clamp(1rem, 1.1vw + 0.8rem, 1.25rem);
+  }
+
+  .section { padding-block: clamp(2.5rem, 8vw, 5rem) var(--space-3xl); }
+  .blog { max-width: 67rem; margin-inline: auto; }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
     margin: 0 0 var(--space-xl);
   }
-  .empty { color: var(--color-ink-2); }
+  .filter {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--color-paper-2) 72%, white);
+    color: var(--color-ink-2);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: var(--text-sm);
+    padding: 0.46rem 0.86rem;
+    cursor: pointer;
+    transition: color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+  }
+  .filter:hover,
+  .filter:focus-visible {
+    color: var(--color-ink);
+    background: color-mix(in oklch, var(--color-paper-2) 60%, #00d08a);
+  }
+  .filter.is-active {
+    color: #063625;
+    background: color-mix(in oklch, #00d08a 85%, white);
+    font-weight: 600;
+  }
+  .filter:active { transform: translateY(1px); }
+
+  .empty {
+    color: var(--color-ink-2);
+    margin: var(--space-lg) 0 0;
+  }
+  .empty--hidden { display: none; }
+
   .post-list {
     list-style: none;
     margin: 0;
     padding: 0;
-    max-width: 60rem;
   }
   .post {
     border-top: var(--rule-hair) solid var(--color-rule);
   }
   .post:last-child { border-bottom: var(--rule-hair) solid var(--color-rule); }
   .post__link {
-    display: block;
+    display: flex;
+    gap: var(--space-xl);
+    justify-content: space-between;
     text-decoration: none;
     color: inherit;
-    padding-block: var(--space-lg);
-    transition: opacity var(--dur-short) var(--ease-out);
+    padding-block: clamp(1.25rem, 2.2vw, 2.25rem);
+    transition: background-color var(--dur-short) var(--ease-out);
   }
   .post__link:hover,
-  .post__link:focus-visible { opacity: 0.6; }
+  .post__link:focus-visible { background: color-mix(in oklch, var(--color-paper-2) 40%, transparent); }
+
+  .post__main { min-width: 0; }
   .post__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+    margin: var(--space-md) 0 0;
+  }
+  .post__draft {
+    color: var(--color-accent-ink);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-ink-2);
-    margin: 0 0 var(--space-xs);
-  }
-  .post__draft {
-    color: var(--color-accent-ink);
-    margin-left: var(--space-sm);
   }
   .post__title {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: var(--text-xl);
-    margin: 0 0 var(--space-2xs);
+    font-size: clamp(1.5rem, 0.9vw + 1.1rem, 2.2rem);
+    line-height: 1.16;
+    margin: 0 0 var(--space-xs);
   }
   .post__description {
     color: var(--color-ink-2);
-    max-width: 60ch;
+    font-size: var(--text-base);
+    max-width: 70ch;
     margin: 0;
+  }
+
+  .post__tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-content: flex-start;
+    gap: var(--space-xs);
+    min-width: 14rem;
+    padding-top: var(--space-2xs);
+  }
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    border: var(--rule-hair) solid color-mix(in oklch, var(--color-rule) 84%, transparent);
+    background: color-mix(in oklch, var(--color-paper) 84%, white);
+    color: var(--color-ink-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: 1;
+    padding: 0.34rem 0.62rem;
+  }
+
+  @media (max-width: 56rem) {
+    .hero { min-height: min(28rem, 54vh); }
+    .post__link {
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .post__tags {
+      justify-content: flex-start;
+      min-width: 0;
+    }
   }
 </style>
