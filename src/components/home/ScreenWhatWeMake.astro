@@ -42,7 +42,9 @@ const projects = (await getCollection("projects"))
     justify-content: center;
     gap: var(--space-2xl);
     background: var(--color-paper);
-    padding-block: var(--space-3xl);
+    border-top: var(--rule-hair) solid var(--color-rule);
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-3xl);
     overflow: clip;
   }
   .screen__eyebrow {
@@ -93,12 +95,28 @@ const projects = (await getCollection("projects"))
   .project-rail__track:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 6px; }
 
   .project-card {
+    --rot-y: 0deg;
+    --scale: 1;
+    --tz: 0px;
+    --hover-rx: 0deg;
+    --hover-ry: 0deg;
+    --hover-tz: 0px;
     flex: 0 0 auto;
     width: min(20rem, 78vw);
     scroll-snap-align: center;
     transform-style: preserve-3d;
+    transform:
+      rotateY(var(--rot-y))
+      scale(var(--scale))
+      translateZ(var(--tz))
+      rotateX(var(--hover-rx))
+      rotateY(var(--hover-ry))
+      translateZ(var(--hover-tz));
     transition: transform 300ms var(--ease-out), opacity 300ms var(--ease-out);
     will-change: transform;
+  }
+  .project-card.is-hovering {
+    transition: opacity 300ms var(--ease-out);
   }
   .project-card__inner {
     height: 100%;
@@ -206,7 +224,9 @@ const projects = (await getCollection("projects"))
         const rotateY = clamped * -MAX_ROTATE;
         const scale = 1 - Math.abs(clamped) * 0.12;
         const translateZ = -Math.abs(clamped) * 60;
-        card.style.transform = `rotateY(${rotateY}deg) scale(${scale}) translateZ(${translateZ}px)`;
+        card.style.setProperty("--rot-y", `${rotateY}deg`);
+        card.style.setProperty("--scale", String(scale));
+        card.style.setProperty("--tz", `${translateZ}px`);
         card.style.opacity = String(1 - Math.abs(clamped) * 0.35);
       });
     };
@@ -224,6 +244,37 @@ const projects = (await getCollection("projects"))
     track.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
     applyTilt();
+
+    if (!reduceMotion) {
+      const HOVER_MAX_ROTATE = 10; // degrees
+      const HOVER_TZ = 24; // px lift toward the viewer
+
+      cards.forEach((card) => {
+        card.addEventListener("pointerenter", (event) => {
+          if (event.pointerType === "touch") return;
+          card.classList.add("is-hovering");
+        });
+
+        card.addEventListener("pointermove", (event) => {
+          if (event.pointerType === "touch") return;
+          const rect = card.getBoundingClientRect();
+          const px = (event.clientX - rect.left) / rect.width;
+          const py = (event.clientY - rect.top) / rect.height;
+          const rotateX = (0.5 - py) * HOVER_MAX_ROTATE * 2;
+          const rotateY = (px - 0.5) * HOVER_MAX_ROTATE * 2;
+          card.style.setProperty("--hover-rx", `${rotateX.toFixed(2)}deg`);
+          card.style.setProperty("--hover-ry", `${rotateY.toFixed(2)}deg`);
+          card.style.setProperty("--hover-tz", `${HOVER_TZ}px`);
+        });
+
+        card.addEventListener("pointerleave", () => {
+          card.classList.remove("is-hovering");
+          card.style.setProperty("--hover-rx", "0deg");
+          card.style.setProperty("--hover-ry", "0deg");
+          card.style.setProperty("--hover-tz", "0px");
+        });
+      });
+    }
 
     const scrollByCard = (direction: 1 | -1) => {
       const card = cards[0];

@@ -2,40 +2,46 @@
 const members = [
   { handle: "4n5rud", role: "Backend" },
   { handle: "kec08", role: "App" },
+  { handle: "songmin102388", role: "Backend" },
+  { handle: "hyj090915", role: "Backend" },
+  { handle: "ja2x0n", role: "Web" },
+  { handle: "wonu1016", role: "Backend" },
   // 새 팀원은 이 배열에 { handle: "...", role: "..." } 를 추가하세요.
 ];
 ---
 
-<section class="screen screen--04" id="members" aria-label="Who Makes ReMake?">
+<section class="screen screen--04" id="members" aria-label="Members">
   <div class="wrap">
-    <h2 class="who-intro reveal" style="--i:0">WHO<br />MAKES<br /><span class="brand-mark">ReMake</span>?</h2>
+    <h2 class="who-intro reveal" style="--i:0">MEMBERS</h2>
 
-    <ul class="member-grid reveal" style="--i:1">
-      {members.map((member) => (
-        <li class="member">
-          <a class="member__link" href={`https://github.com/${member.handle}`} target="_blank" rel="noopener">
-            <img class="member__avatar" src={`https://github.com/${member.handle}.png?size=200`} alt="" width="96" height="96" loading="lazy" />
-            <span class="member__name">{member.handle}</span>
-            <span class="member__role">{member.role}</span>
-            <span class="member__github">GitHub →</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-
-    <div class="who-cta reveal" style="--i:2">
-      <p class="who-cta__line">Different skills.<br />Same curiosity.</p>
-      <p class="who-cta__line who-cta__line--accent">Build something.<br />Make it real.</p>
-      <div class="who-cta__buttons">
-        <a class="btn btn--outline" href="https://github.com/GBSW-ReMake" target="_blank" rel="noopener">GitHub</a>
-        <a class="btn btn--outline" href="/projects">Projects</a>
-        <a class="btn btn--outline" href="/blog">Tech Blog</a>
+    <div class="member-marquee-wrap reveal" style="--i:1">
+      <div class="member-marquee">
+        <ul class="member-grid">
+          {members.map((member) => (
+            <li class="member">
+              <a class="member__link" href={`https://github.com/${member.handle}`} target="_blank" rel="noopener">
+                <img class="member__avatar" src={`https://github.com/${member.handle}.png?size=200`} alt="" width="96" height="96" loading="lazy" />
+                <span class="member__name">{member.handle}</span>
+                <span class="member__role">{member.role}</span>
+                <span class="member__github">GitHub →</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <ul class="member-grid" aria-hidden="true">
+          {members.map((member) => (
+            <li class="member">
+              <a class="member__link" href={`https://github.com/${member.handle}`} target="_blank" rel="noopener" tabindex="-1">
+                <img class="member__avatar" src={`https://github.com/${member.handle}.png?size=200`} alt="" width="96" height="96" loading="lazy" />
+                <span class="member__name">{member.handle}</span>
+                <span class="member__role">{member.role}</span>
+                <span class="member__github">GitHub →</span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
-  </div>
-
-  <div class="who-signature" data-signature>
-    <canvas class="who-signature__canvas" aria-hidden="true"></canvas>
   </div>
 </section>
 
@@ -53,13 +59,35 @@ const members = [
     margin: 0 0 var(--space-2xl);
   }
 
+  .member-marquee-wrap {
+    overflow: hidden;
+    margin: 0 0 var(--space-3xl);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  }
+  .member-marquee {
+    display: flex;
+    width: max-content;
+    animation: member-scroll 32s linear infinite;
+  }
+  .member-marquee:hover {
+    animation-play-state: paused;
+  }
+  @keyframes member-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
   .member-grid {
     list-style: none;
-    margin: 0 0 var(--space-3xl);
+    margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(0, min(12rem, 100%)));
-    gap: var(--space-2xl) var(--space-lg);
+    display: flex;
+    gap: var(--space-2xl);
+    padding-inline-end: var(--space-2xl);
+  }
+  .member {
+    flex: 0 0 auto;
+    width: 9rem;
   }
   .member__link {
     display: grid;
@@ -108,80 +136,7 @@ const members = [
     transform: translateY(0);
   }
 
-  .who-cta {
-    border-top: var(--rule-hair) solid var(--color-rule);
-    padding-top: var(--space-2xl);
-  }
-  .who-cta__line {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--text-2xl);
-    line-height: 1.2;
-    margin: 0 0 var(--space-lg);
-  }
-  .who-cta__line--accent { color: var(--color-accent-ink); }
-  .who-cta__buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-md);
-    margin-top: var(--space-xl);
-  }
-
-  .who-signature {
-    position: relative;
-    height: 40vh;
-    min-height: 16rem;
-    margin-top: var(--space-3xl);
-  }
-  .who-signature__canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    color: var(--color-ink);
-  }
-
-  @media (max-width: 60rem) {
-    .who-signature { height: 30vh; min-height: 12rem; }
+  @media (prefers-reduced-motion: reduce) {
+    .member-marquee { animation: none; }
   }
 </style>
-
-<script>
-  import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
-  import { ParticleField, prefersReducedMotion } from "../../lib/particle-text";
-  import { refreshOnSettle } from "../../lib/scroll-refresh";
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  const signature = document.querySelector<HTMLElement>("[data-signature]");
-  const canvas = signature?.querySelector<HTMLCanvasElement>(".who-signature__canvas");
-
-  if (signature && canvas) {
-    const isDesktop = window.matchMedia("(min-width: 60rem)").matches;
-    const field = new ParticleField(canvas, "ReMake", {
-      color: getComputedStyle(canvas).color,
-    });
-
-    if (prefersReducedMotion() || !isDesktop) {
-      field.renderStatic();
-    } else {
-      field.render(0);
-
-      ScrollTrigger.create({
-        trigger: signature,
-        start: "top 85%",
-        end: "top 25%",
-        scrub: 0.6,
-        onUpdate: (self) => field.render(self.progress),
-      });
-      refreshOnSettle(ScrollTrigger);
-
-      let resizeRaf = 0;
-      window.addEventListener("resize", () => {
-        cancelAnimationFrame(resizeRaf);
-        resizeRaf = requestAnimationFrame(() => field.resize());
-      });
-    }
-  }
-</script>

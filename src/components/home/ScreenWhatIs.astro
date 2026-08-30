@@ -3,18 +3,10 @@
 
 <section class="screen screen--01" id="screen-what-is" aria-label="What is ReMake?">
   <canvas class="screen__canvas" aria-hidden="true"></canvas>
+  <p class="screen__remake-text" aria-hidden="true">REMAKE</p>
   <div class="wrap screen__content">
     <h1 class="screen__display reveal" style="--i:0">WE MAKE.<br />WE LEARN.<br />WE REMAKE.</h1>
     <p class="screen__wordmark reveal" style="--i:1">GBSW <span class="brand-mark">ReMake</span></p>
-    <p class="screen__lede reveal" style="--i:2">
-      학생들이 직접 아이디어를 내고,<br />서비스를 만들고, 실제 사용자에게 제공합니다.
-    </p>
-    <p class="screen__meaning reveal" style="--i:3">
-      <span>IDEA</span><span class="arrow" aria-hidden="true">↓</span>
-      <span>MAKE</span><span class="arrow" aria-hidden="true">↓</span>
-      <span>RESULT</span><span class="arrow" aria-hidden="true">↓</span>
-      <span class="accent">ReMake</span><span class="arrow" aria-hidden="true">↺</span>
-    </p>
   </div>
 </section>
 
@@ -37,6 +29,22 @@
     opacity: 0.9;
     pointer-events: none;
   }
+  .screen__remake-text {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(4rem, 22vw, 20rem);
+    line-height: 1;
+    color: var(--color-ink);
+    opacity: 0;
+    pointer-events: none;
+    margin: 0;
+  }
   .screen__content {
     position: relative;
     z-index: 1;
@@ -56,27 +64,8 @@
     font-family: var(--font-display);
     font-weight: 700;
     font-size: var(--text-xl);
-    margin: 0 0 var(--space-md);
-  }
-  .screen__lede {
-    font-size: var(--text-lg);
-    max-width: 32ch;
-    color: var(--color-ink-2);
-    margin: 0 0 var(--space-2xl);
-  }
-  .screen__meaning {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    letter-spacing: 0.04em;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-xs);
     margin: 0;
-    color: var(--color-ink-2);
   }
-  .screen__meaning .arrow { color: var(--color-rule); }
-  .screen__meaning .accent { color: var(--color-accent-ink); font-weight: 500; }
 
   @media (max-width: 60rem) {
     .screen--01 { min-height: auto; padding-block: var(--space-2xl); }
@@ -93,17 +82,20 @@
 
   const section = document.querySelector<HTMLElement>(".screen--01");
   const canvas = section?.querySelector<HTMLCanvasElement>(".screen__canvas");
+  const remakeText = section?.querySelector<HTMLElement>(".screen__remake-text");
   const content = section?.querySelector<HTMLElement>(".screen__content");
 
-  if (section && canvas && content) {
+  if (section && canvas && remakeText && content) {
     const isDesktop = window.matchMedia("(min-width: 60rem)").matches;
     const field = new ParticleField(canvas, "REMAKE", {
       color: getComputedStyle(canvas).color,
       particleCount: 1800,
     });
+    remakeText.style.fontSize = `${field.getMatchingFontSize()}px`;
 
     if (prefersReducedMotion() || !isDesktop) {
-      field.renderStatic();
+      canvas.style.opacity = "0";
+      remakeText.style.opacity = "1";
     } else {
       field.render(0);
       canvas.style.opacity = "0.1";
@@ -114,7 +106,7 @@
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: "top top",
-        end: "+=120%",
+        end: "+=90%",
         scrub: 0.6,
         pin: true,
         onUpdate: (self) => {
@@ -123,22 +115,28 @@
           let opacity: number;
 
           // 0 -> 0.5 scatter into REMAKE (fading in as it forms, so the loose
-          // dust never competes with the copy at rest), 0.5 -> 0.8 hold formed
-          // at full strength, 0.8 -> 1 disperse + fade away.
+          // dust never competes with the copy at rest), 0.5 -> 0.7 hold formed
+          // at full strength, 0.7 -> 1 gradually dissolve into the real, crisp text
+          // (same size as the formed dots, so it reads as a material change, not a cut).
+          let textOpacity: number;
           if (p < 0.5) {
             formProgress = p / 0.5;
             opacity = MIN_OPACITY + (BASE_OPACITY - MIN_OPACITY) * formProgress;
-          } else if (p < 0.8) {
+            textOpacity = 0;
+          } else if (p < 0.7) {
             formProgress = 1;
             opacity = BASE_OPACITY;
+            textOpacity = 0;
           } else {
-            const fade = (p - 0.8) / 0.2;
-            formProgress = 1 - fade;
-            opacity = BASE_OPACITY * (1 - fade);
+            const resolve = (p - 0.7) / 0.3;
+            formProgress = 1;
+            opacity = BASE_OPACITY * (1 - resolve);
+            textOpacity = resolve;
           }
 
           field.render(Math.max(0, Math.min(1, formProgress)));
           canvas.style.opacity = String(opacity);
+          remakeText.style.opacity = String(textOpacity);
 
           // Fade the hero copy out entirely once the particle formation holds,
           // so the fully-formed REMAKE is the only thing on screen at the end.
@@ -162,6 +160,7 @@
         resizeRaf = requestAnimationFrame(() => {
           field.resize();
           field.render(trigger.progress);
+          remakeText.style.fontSize = `${field.getMatchingFontSize()}px`;
           ScrollTrigger.refresh();
         });
       });

@@ -75,7 +75,7 @@
 
   /* ---- layout ---- */
   --page-gutter: clamp(1.25rem, 4vw, 3rem);
-  --page-max: 76rem;
+  --page-max: 96rem;
 
   /* ---- home screens (scrollytelling) ---- */
   --screen-breakpoint: 60rem; /* pinned GSAP choreography only above this width */
